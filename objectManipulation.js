@@ -23,12 +23,22 @@ const obj = {
     b: 4
 }
 
+const obj1 = {
+    d: 4,
+    e: 5
+}
+
+const newObj = {...obj};
+
+
 
 // Immutble
 // spread operator
-const newObj = { ...obj, d: 4, e: 5, b: 8 };
+// const newObj = { ...obj, d: 4, e: 5, b: 8 };
 
 console.log(newObj);
+
+
 
 
 
