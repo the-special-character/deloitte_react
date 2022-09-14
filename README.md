@@ -99,3 +99,22 @@ module.exports = {
   "extends": ["some-other-config-you-use", "prettier"]
 }
 ```
+
+25. install `npm install -D typescript`
+26. `npx tsc --init`
+27. replace all ".js" extention with ".ts" extention in webpack.config.json
+28. add follwing code in "webpack.config.json
+
+```json
+ resolve: {
+     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
+ },
+```
+
+29. add "@babel/preset-typescript" in ".babelrc" file
+
+```json
+{
+  "presets": ["@babel/preset-env", "@babel/preset-typescript"]
+}
+```
