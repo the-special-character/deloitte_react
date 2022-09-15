@@ -9,7 +9,12 @@ const container = document.getElementById('root');
 // 2. component will return only single element
 // 3. style should be object and property name should be camelcase;
 // 4. instead of class have to use classname
-const App = ({ name, h1Color }) => {
+type Props = {
+  name: string;
+  h1Color: string;
+};
+
+const App = ({ name, h1Color }: Props) => {
   return (
     <div className="container">
       <h1
