@@ -1,5 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import App from './app';
+import Main from './main';
 
 import './main.css';
 
@@ -9,35 +11,9 @@ const container = document.getElementById('root');
 // 2. component will return only single element
 // 3. style should be object and property name should be camelcase;
 // 4. instead of class have to use classname
-type Props = {
-  name: string;
-  h1Color: string;
-};
-
-const App = ({ name, h1Color }: Props) => {
-  return (
-    <div className="container">
-      <h1
-        style={{
-          color: h1Color,
-          backgroundColor: 'gold',
-        }}
-      >
-        {name}
-      </h1>
-      <input type="checkbox" />
-      <input type="text" />
-    </div>
-  );
-};
 
 if (container) {
   const root = createRoot(container);
 
-  root.render(
-    <>
-      <App name="Yagnesh" h1Color="red" />
-      <App name="Rohit" h1Color="blue" />
-    </>,
-  );
+  root.render(<App />);
 }

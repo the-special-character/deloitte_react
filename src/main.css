@@ -3,3 +3,17 @@
   flex-direction: column;
   background-color: red;
 }
+
+.wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.wrapper > button {
+  height: 48px;
+  width: 100px;
+}
+
+.wrapper > h2 {
+  padding: 0 20px;
+}

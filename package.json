@@ -26,6 +26,7 @@
     "@babel/preset-react": "^7.18.6",
     "@babel/preset-typescript": "^7.18.6",
     "@types/react": "^18.0.20",
+    "@types/react-addons-shallow-compare": "^0.14.22",
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "babel-loader": "^8.2.5",
@@ -47,6 +48,7 @@
   },
   "dependencies": {
     "react": "^18.2.0",
+    "react-addons-shallow-compare": "^15.6.3",
     "react-dom": "^18.2.0"
   }
 }
