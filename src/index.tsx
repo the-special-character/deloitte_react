@@ -2,6 +2,8 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './app';
 
+import './main.css';
+
 const container = document.getElementById('root');
 
 // 1. first letter of the component Name should be capital letter
