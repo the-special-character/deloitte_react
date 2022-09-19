@@ -1,14 +1,54 @@
 {
   "todoList": [
     {
-      "text": "Get Milk",
-      "isDone": false,
-      "id": 1
-    },
-    {
       "text": "learn react",
       "isDone": false,
       "id": 2
+    },
+    {
+      "text": "sdfgsadf",
+      "isDone": false,
+      "id": 3
+    },
+    {
+      "text": "sdfg",
+      "isDone": true,
+      "id": 4
+    },
+    {
+      "text": "sdfgsdf",
+      "isDone": true,
+      "id": 5
+    },
+    {
+      "text": "gfsd",
+      "isDone": false,
+      "id": 6
+    },
+    {
+      "text": "gsdfg",
+      "isDone": false,
+      "id": 7
+    },
+    {
+      "text": "sdfg",
+      "isDone": true,
+      "id": 8
+    },
+    {
+      "text": "sdfg",
+      "isDone": false,
+      "id": 9
+    },
+    {
+      "text": "sdfgs",
+      "isDone": false,
+      "id": 10
+    },
+    {
+      "text": "gdsfgdrsf",
+      "isDone": false,
+      "id": 11
     }
   ]
 }

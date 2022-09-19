@@ -22,14 +22,20 @@ class Todo extends Component<Props, State> {
   todoInputRef = createRef<HTMLInputElement>();
 
   async componentDidMount() {
-    this.loadTodo();
+    this.loadTodo(FilterType.all);
   }
 
-  loadTodo = async () => {
+  loadTodo = async (filterType: FilterType) => {
     try {
-      const res = await fetch('http://localhost:3000/todoList');
+      let url = 'http://localhost:3000/todoList';
+
+      if (filterType !== FilterType.all) {
+        url = `${url}?isDone=${filterType === FilterType.complete}`;
+      }
+
+      const res = await fetch(url);
       const todoList = await res.json();
-      this.setState({ todoList });
+      this.setState({ todoList, filterType });
     } catch (error) {
       this.setState({ error });
     }
@@ -72,43 +78,58 @@ class Todo extends Component<Props, State> {
     }
   };
 
-  toggleCompleteTodo = (item: TodoItem) => {
-    this.setState(({ todoList }, props) => {
-      const index = todoList.findIndex((x) => x.id === item.id);
+  toggleCompleteTodo = async (item: TodoItem) => {
+    try {
+      const res = await fetch(`http://localhost:3000/todoList/${item.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ ...item, isDone: !item.isDone }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
 
-      return {
-        todoList: [
-          ...todoList.slice(0, index),
-          { ...item, isDone: !item.isDone },
-          ...todoList.slice(index + 1),
-        ],
-      };
-    });
+      const todoItem: TodoItem = await res.json();
+
+      this.setState(({ todoList }, props) => {
+        const index = todoList.findIndex((x) => x.id === item.id);
+
+        return {
+          todoList: [
+            ...todoList.slice(0, index),
+            todoItem,
+            ...todoList.slice(index + 1),
+          ],
+        };
+      });
+    } catch (error) {
+      this.setState({ error });
+    }
   };
 
-  deleteTodo = (item: TodoItem) => {
-    this.setState(({ todoList }, props) => {
-      const index = todoList.findIndex((x) => x.id === item.id);
-      return {
-        todoList: [...todoList.slice(0, index), ...todoList.slice(index + 1)],
-      };
-    });
+  deleteTodo = async (item: TodoItem) => {
+    try {
+      await fetch(`http://localhost:3000/todoList/${item.id}`, {
+        method: 'DELETE',
+      });
+
+      this.setState(({ todoList }, props) => {
+        const index = todoList.findIndex((x) => x.id === item.id);
+        return {
+          todoList: [...todoList.slice(0, index), ...todoList.slice(index + 1)],
+        };
+      });
+    } catch (error) {
+      this.setState({ error });
+    }
   };
 
   filterTodos = (filterType: FilterType) => {
-    this.setState({ filterType });
+    this.loadTodo(filterType);
   };
 
   render() {
-    const { error } = this.state;
-
-    // if (error) {
-    //   return (
-    //     <div>
-    //       <h1>{error.message}</h1>
-    //     </div>
-    //   );
-    // }
+    const { error, todoList, filterType } = this.state;
 
     return (
       <div className="flex flex-col h-screen items-center">
@@ -123,9 +144,12 @@ class Todo extends Component<Props, State> {
             <TodoList
               toggleCompleteTodo={this.toggleCompleteTodo}
               deleteTodo={this.deleteTodo}
-              {...this.state}
+              todoList={todoList}
             />
-            <TodoFilter filterTodos={this.filterTodos} />
+            <TodoFilter
+              filterTodos={this.filterTodos}
+              filterType={filterType}
+            />
           </>
         )}
       </div>
