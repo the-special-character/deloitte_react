@@ -23,27 +23,27 @@ class Todo extends Component<Props, State> {
 
   todoInputRef = createRef<HTMLInputElement>();
 
-  setLoadingState = (type: TodoAppType) => {
+  setLoadingState = (type: TodoAppType, id: number = -1) => {
     this.setState(({ appState }) => {
       return {
-        appState: [...appState, { type, isLoading: true, hasError: false }],
+        appState: [...appState, { type, isLoading: true, hasError: false, id }],
       };
     });
   };
 
-  setSuccessState = (type: TodoAppType) => {
+  setSuccessState = (type: TodoAppType, id: number = -1) => {
     this.setState(({ appState }) => {
       return {
-        appState: appState.filter((x) => x.type !== type),
+        appState: appState.filter((x) => !(x.type === type && x.id === id)),
       };
     });
   };
 
-  setErrorState = (type: TodoAppType, error: Error) => {
+  setErrorState = (type: TodoAppType, error: Error, id: number = -1) => {
     this.setState(({ appState }, props) => {
       return {
         appState: appState.map((x) => {
-          if (x.type === type) {
+          if (x.type === type && x.id === id) {
             return {
               ...x,
               isLoading: false,
@@ -122,7 +122,9 @@ class Todo extends Component<Props, State> {
   };
 
   toggleCompleteTodo = async (item: TodoItem) => {
+    const type = TodoAppType.UPDATE_TODO;
     try {
+      this.setLoadingState(type, item.id);
       const res = await fetch(`http://localhost:3000/todoList/${item.id}`, {
         method: 'PUT',
         body: JSON.stringify({ ...item, isDone: !item.isDone }),
@@ -145,13 +147,16 @@ class Todo extends Component<Props, State> {
           ],
         };
       });
+      this.setSuccessState(type, item.id);
     } catch (error) {
-      this.setState({ error });
+      this.setErrorState(type, error, item.id);
     }
   };
 
   deleteTodo = async (item: TodoItem) => {
+    const type = TodoAppType.DELETE;
     try {
+      this.setLoadingState(type, item.id);
       await fetch(`http://localhost:3000/todoList/${item.id}`, {
         method: 'DELETE',
       });
@@ -162,13 +167,20 @@ class Todo extends Component<Props, State> {
           todoList: [...todoList.slice(0, index), ...todoList.slice(index + 1)],
         };
       });
+      this.setSuccessState(type, item.id);
     } catch (error) {
-      this.setState({ error });
+      this.setErrorState(type, error, item.id);
     }
   };
 
   filterTodos = (filterType: FilterType) => {
     this.loadTodo(filterType);
+  };
+
+  removeError = (error: AppState) => {
+    this.setState(({ appState }) => {
+      return { appState: appState.filter((x) => x.id !== error.id) };
+    });
   };
 
   render() {
@@ -179,6 +191,16 @@ class Todo extends Component<Props, State> {
     );
 
     const addTodoState = appState.find((x) => x.type === TodoAppType.ADD_TODO);
+
+    const updateTodoState = appState.filter(
+      (x) => x.type === TodoAppType.UPDATE_TODO,
+    );
+
+    const deleteTodoState = appState.filter(
+      (x) => x.type === TodoAppType.DELETE,
+    );
+
+    const errors = appState.filter((x) => x.hasError);
 
     if (fetchTodoState && fetchTodoState.isLoading) {
       return (
@@ -196,23 +218,38 @@ class Todo extends Component<Props, State> {
           ref={this.todoInputRef}
           addTodoState={addTodoState}
         />
-        {error ? (
-          <div>
-            <h1>{error.message}</h1>
-          </div>
-        ) : (
-          <>
-            <TodoList
-              toggleCompleteTodo={this.toggleCompleteTodo}
-              deleteTodo={this.deleteTodo}
-              todoList={todoList}
-            />
-            <TodoFilter
-              filterTodos={this.filterTodos}
-              filterType={filterType}
-            />
-          </>
-        )}
+
+        <TodoList
+          toggleCompleteTodo={this.toggleCompleteTodo}
+          deleteTodo={this.deleteTodo}
+          todoList={todoList}
+          updateTodoState={updateTodoState}
+          deleteTodoState={deleteTodoState}
+        />
+        <TodoFilter filterTodos={this.filterTodos} filterType={filterType} />
+
+        <div className="w-full">
+          {errors.map((x, i) => (
+            <div
+              key={x.id}
+              role="alert"
+              className="p-4 fixed right-0 max-w-screen-sm min-w-[320px]"
+              style={{
+                top: 100 * i,
+              }}
+            >
+              <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2 flex justify-between">
+                <span>Danger</span>
+                <button type="button" onClick={() => this.removeError(x)}>
+                  X
+                </button>
+              </div>
+              <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+                <p>{x.errorMessage}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
