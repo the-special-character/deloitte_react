@@ -1,20 +1,85 @@
-import React, { Component, createRef } from 'react';
-import ErrorBlock from './component/errorBlock';
-import Todo from './container/todo';
+import React, { useState, useEffect, useRef } from 'react';
+import useCounter from './hooks/useCounter';
 
-// Props are immutable
-// Function Component
-type State = {};
+const Child = () => {
+  useEffect(() => {
+    const mouseMove = () => {
+      console.log('mouse move');
+    };
+
+    document.addEventListener('mousemove', mouseMove);
+
+    const interval = setInterval(() => {
+      console.log('interval');
+    }, 1000);
+
+    // componetWillUnmount
+    return () => {
+      document.removeEventListener('mousemove', mouseMove);
+      clearInterval(interval);
+    };
+  }, []);
+
+  return <p>Hello child element</p>;
+};
 
 type Props = {};
-class App extends Component<Props, State> {
-  render(): React.ReactNode {
-    return (
-      <ErrorBlock>
-        <Todo />
-      </ErrorBlock>
-    );
-  }
+
+function App({}: Props) {
+  const { counter, increment, decrement } = useCounter();
+  const {
+    counter: value,
+    increment: incrementValue,
+    decrement: decrementValue,
+  } = useCounter();
+  // const [hasMounted, setHasMounted] = useState(false);
+
+  const h1Ref = useRef<HTMLHeadingElement>(null);
+  const hasMounted = useRef<boolean>(false);
+
+  // ComponentDidMount
+  // ComponentDidUpdate
+  useEffect(() => {
+    if (hasMounted.current) {
+      // const h1 = h1Ref.current;
+      // console.log(h1);
+      console.log('use Effect with value');
+    }
+  }, [value]);
+
+  // ComponentDidMount
+  useEffect(() => {
+    // const h1 = h1Ref.current;
+    // console.log(h1);
+    console.log('use Effect');
+    hasMounted.current = true;
+    // setHasMounted(true);
+  }, []);
+
+  return (
+    <>
+      <h1 ref={h1Ref}>Heading</h1>
+      <div className="flex">
+        <button type="button" className="btn" onClick={increment}>
+          +
+        </button>
+        <p className="font-semibold text-4xl px-4">{counter}</p>
+        <button type="button" className="btn" onClick={decrement}>
+          -
+        </button>
+      </div>
+      <div className="flex">
+        <button type="button" className="btn" onClick={incrementValue}>
+          +
+        </button>
+        <p className="font-semibold text-4xl px-4">{value}</p>
+        <button type="button" className="btn" onClick={decrementValue}>
+          -
+        </button>
+      </div>
+      {counter < 5 && <Child />}
+    </>
+  );
 }
 
 export default App;
