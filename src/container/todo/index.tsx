@@ -2,7 +2,7 @@ import React, { Component, ChangeEvent, FormEvent, createRef } from 'react';
 import TodoFilter from './todoFilter';
 import TodoForm from './todoForm';
 import TodoList from './todoList';
-import { FilterType, TodoItem } from './todoTypes';
+import { AppState, FilterType, TodoAppType, TodoItem } from './todoTypes';
 
 type Props = {};
 
@@ -10,6 +10,7 @@ type State = {
   todoList: TodoItem[];
   filterType: FilterType;
   error?: Error;
+  appState: AppState[];
 };
 
 class Todo extends Component<Props, State> {
@@ -17,15 +18,53 @@ class Todo extends Component<Props, State> {
     todoList: [],
     filterType: FilterType.all,
     error: undefined,
+    appState: [],
   };
 
   todoInputRef = createRef<HTMLInputElement>();
+
+  setLoadingState = (type: TodoAppType) => {
+    this.setState(({ appState }) => {
+      return {
+        appState: [...appState, { type, isLoading: true, hasError: false }],
+      };
+    });
+  };
+
+  setSuccessState = (type: TodoAppType) => {
+    this.setState(({ appState }) => {
+      return {
+        appState: appState.filter((x) => x.type !== type),
+      };
+    });
+  };
+
+  setErrorState = (type: TodoAppType, error: Error) => {
+    this.setState(({ appState }, props) => {
+      return {
+        appState: appState.map((x) => {
+          if (x.type === type) {
+            return {
+              ...x,
+              isLoading: false,
+              hasError: true,
+              errorMessage: error.message,
+            };
+          }
+          return x;
+        }),
+      };
+    });
+  };
 
   async componentDidMount() {
     this.loadTodo(FilterType.all);
   }
 
   loadTodo = async (filterType: FilterType) => {
+    const type = TodoAppType.FETCH_TODO;
+
+    this.setLoadingState(type);
     try {
       let url = 'http://localhost:3000/todoList';
 
@@ -36,16 +75,19 @@ class Todo extends Component<Props, State> {
       const res = await fetch(url);
       const todoList = await res.json();
       this.setState({ todoList, filterType });
+      this.setSuccessState(type);
     } catch (error) {
-      this.setState({ error });
+      this.setErrorState(type, error);
     }
   };
 
   addTodo = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const type = TodoAppType.ADD_TODO;
 
     try {
       const todoInput = this.todoInputRef.current;
+      this.setLoadingState(type);
 
       const res = await fetch('http://localhost:3000/todoList', {
         method: 'POST',
@@ -70,11 +112,12 @@ class Todo extends Component<Props, State> {
           },
           () => {
             todoInput.value = '';
+            this.setSuccessState(type);
           },
         );
       }
     } catch (error) {
-      this.setState({ error });
+      this.setErrorState(type, error);
     }
   };
 
@@ -129,12 +172,30 @@ class Todo extends Component<Props, State> {
   };
 
   render() {
-    const { error, todoList, filterType } = this.state;
+    const { error, todoList, filterType, appState } = this.state;
+
+    const fetchTodoState = appState.find(
+      (x) => x.type === TodoAppType.FETCH_TODO,
+    );
+
+    const addTodoState = appState.find((x) => x.type === TodoAppType.ADD_TODO);
+
+    if (fetchTodoState && fetchTodoState.isLoading) {
+      return (
+        <div className="h-screen flex justify-center items-center">
+          <h1 className="text-4xl font-semibold text-red-400">Loading....</h1>
+        </div>
+      );
+    }
 
     return (
       <div className="flex flex-col h-screen items-center">
         <h1 className="text-4xl font-semibold py-4">Todo Application</h1>
-        <TodoForm addTodo={this.addTodo} ref={this.todoInputRef} />
+        <TodoForm
+          addTodo={this.addTodo}
+          ref={this.todoInputRef}
+          addTodoState={addTodoState}
+        />
         {error ? (
           <div>
             <h1>{error.message}</h1>
