@@ -24,7 +24,11 @@ const TodoListItem = ({ todoItem, toggleCompleteTodo, deleteTodo }: Props) => {
       >
         {todoItem.text}
       </p>
-      <button type="button" onClick={() => deleteTodo(todoItem)}>
+      <button
+        type="button"
+        className="btn"
+        onClick={() => deleteTodo(todoItem)}
+      >
         Delete
       </button>
     </li>

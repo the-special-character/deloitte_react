@@ -9,39 +9,66 @@ type Props = {};
 type State = {
   todoList: TodoItem[];
   filterType: FilterType;
+  error?: Error;
 };
 
 class Todo extends Component<Props, State> {
   state: State = {
     todoList: [],
     filterType: FilterType.all,
+    error: undefined,
   };
 
   todoInputRef = createRef<HTMLInputElement>();
 
-  addTodo = (event: FormEvent<HTMLFormElement>) => {
+  async componentDidMount() {
+    this.loadTodo();
+  }
+
+  loadTodo = async () => {
+    try {
+      const res = await fetch('http://localhost:3000/todoList');
+      const todoList = await res.json();
+      this.setState({ todoList });
+    } catch (error) {
+      this.setState({ error });
+    }
+  };
+
+  addTodo = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const todoInput = this.todoInputRef.current;
+    try {
+      const todoInput = this.todoInputRef.current;
 
-    if (todoInput) {
-      this.setState(
-        ({ todoList }) => {
-          return {
-            todoList: [
-              ...todoList,
-              {
-                id: new Date().valueOf(),
-                text: todoInput.value || '',
-                isDone: false,
-              },
-            ],
-          };
+      const res = await fetch('http://localhost:3000/todoList', {
+        method: 'POST',
+        body: JSON.stringify({
+          text: todoInput?.value || '',
+          isDone: false,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
-        () => {
-          todoInput.value = '';
-        },
-      );
+      });
+
+      const todoItem: TodoItem = await res.json();
+
+      if (todoInput) {
+        this.setState(
+          ({ todoList }) => {
+            return {
+              todoList: [...todoList, todoItem],
+            };
+          },
+          () => {
+            todoInput.value = '';
+          },
+        );
+      }
+    } catch (error) {
+      this.setState({ error });
     }
   };
 
@@ -73,16 +100,34 @@ class Todo extends Component<Props, State> {
   };
 
   render() {
+    const { error } = this.state;
+
+    // if (error) {
+    //   return (
+    //     <div>
+    //       <h1>{error.message}</h1>
+    //     </div>
+    //   );
+    // }
+
     return (
       <div className="flex flex-col h-screen items-center">
         <h1 className="text-4xl font-semibold py-4">Todo Application</h1>
         <TodoForm addTodo={this.addTodo} ref={this.todoInputRef} />
-        <TodoList
-          toggleCompleteTodo={this.toggleCompleteTodo}
-          deleteTodo={this.deleteTodo}
-          {...this.state}
-        />
-        <TodoFilter filterTodos={this.filterTodos} />
+        {error ? (
+          <div>
+            <h1>{error.message}</h1>
+          </div>
+        ) : (
+          <>
+            <TodoList
+              toggleCompleteTodo={this.toggleCompleteTodo}
+              deleteTodo={this.deleteTodo}
+              {...this.state}
+            />
+            <TodoFilter filterTodos={this.filterTodos} />
+          </>
+        )}
       </div>
     );
   }
