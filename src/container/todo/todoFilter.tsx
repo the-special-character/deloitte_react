@@ -46,4 +46,11 @@ const TodoFilter = ({ filterTodos, filterType }: Props) => {
   );
 };
 
-export default memo(TodoFilter);
+const TodoFilterMemo = memo(TodoFilter, (prevProps, nextProps) => {
+  console.log(prevProps);
+  console.log(nextProps);
+
+  return true;
+});
+
+export default TodoFilterMemo;

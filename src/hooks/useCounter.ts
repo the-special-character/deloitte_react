@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 const useCounter = () => {
   const [counter, setCounter] = useState(0);
 
-  const increment = () => {
+  const increment = useCallback(() => {
     setCounter((val) => val + 1);
-  };
+  }, []);
 
-  const decrement = () => {
+  const decrement = useCallback(() => {
     setCounter((val) => val - 1);
-  };
+  }, []);
 
   return {
     counter,

@@ -1,7 +1,7 @@
 export enum FilterType {
-  all,
-  pending,
-  complete,
+  all = 'all',
+  pending = 'pending',
+  complete = 'complete',
 }
 
 export enum TodoAppType {
@@ -23,4 +23,9 @@ export type AppState = {
   hasError?: boolean;
   errorMessage?: string;
   id: number;
+};
+
+export type TodoStateData = {
+  todoList: TodoItem[];
+  appState: AppState[];
 };

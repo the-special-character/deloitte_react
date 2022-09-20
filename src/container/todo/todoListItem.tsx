@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import cn from 'classnames';
 import { AppState, TodoItem } from './todoTypes';
+import { LocaleContext } from '../../context/localeContext';
 
 type Props = {
   todoItem: TodoItem;
