@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './app';
+import { RouterProvider } from 'react-router-dom';
 
 import './main.css';
+import routes from './routes';
 
 const container = document.getElementById('root');
 
@@ -14,5 +15,15 @@ const container = document.getElementById('root');
 if (container) {
   const root = createRoot(container);
 
-  root.render(<App />);
+  root.render(
+    <Suspense
+      fallback={
+        <h1 className="h-screen flex justify-center items-center text-5xl font-semibold text-red-500">
+          Loading...
+        </h1>
+      }
+    >
+      <RouterProvider router={routes} />
+    </Suspense>,
+  );
 }
