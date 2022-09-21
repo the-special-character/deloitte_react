@@ -2,10 +2,12 @@ import React, {
   createContext,
   PropsWithChildren,
   useCallback,
+  useMemo,
   useReducer,
 } from 'react';
 import {
   AppState,
+  FilterType,
   TodoAppType,
   TodoItem,
   TodoStateData,
@@ -13,7 +15,7 @@ import {
 import todoReducers, { todoInitialState } from '../reducers/todoReducers';
 
 export type TodoContextType = {
-  loadTodo: () => void;
+  loadTodo: (value?: FilterType) => void;
   addTodo: (value?: string) => void;
   toggleCompleteTodo: (item: TodoItem) => void;
   deleteTodo: (item: TodoItem) => void;
@@ -22,6 +24,7 @@ export type TodoContextType = {
 export const TodoContext = createContext<TodoContextType>({
   todoList: [],
   appState: [],
+  filterType: FilterType.all,
   loadTodo: () => {},
   addTodo: () => {},
   toggleCompleteTodo: () => {},
@@ -31,33 +34,45 @@ export const TodoContext = createContext<TodoContextType>({
 export const TodoProvider = ({ children }: PropsWithChildren) => {
   const [state, dispatch] = useReducer(todoReducers, todoInitialState);
 
-  const loadTodo = useCallback(async () => {
-    const type = TodoAppType.FETCH_TODO;
-    try {
-      dispatch({
-        type: 'LOAD_TODO_REQUEST',
-        payload: {
-          type,
-          id: -1,
-        },
-      });
+  const loadTodo = useCallback(
+    async (filterType: FilterType = FilterType.all) => {
+      const type = TodoAppType.FETCH_TODO;
+      try {
+        dispatch({
+          type: 'LOAD_TODO_REQUEST',
+          payload: {
+            type,
+            id: -1,
+          },
+        });
 
-      const res = await fetch('http://localhost:3000/todoList');
+        let url = 'http://localhost:3000/todoList';
 
-      const todoList: TodoItem[] = await res.json();
+        if (filterType !== FilterType.all) {
+          url = `${url}?isDone=${filterType === FilterType.complete}`;
+        }
 
-      dispatch({ type: 'LOAD_TODO_SUCCESS', payload: todoList });
-    } catch (error) {
-      dispatch({
-        type: 'LOAD_TODO_FAIL',
-        payload: {
-          id: -1,
-          type,
-          error,
-        },
-      });
-    }
-  }, []);
+        const res = await fetch(url);
+
+        const todoList: TodoItem[] = await res.json();
+
+        dispatch({
+          type: 'LOAD_TODO_SUCCESS',
+          payload: { todoList, filterType },
+        });
+      } catch (error) {
+        dispatch({
+          type: 'LOAD_TODO_FAIL',
+          payload: {
+            id: -1,
+            type,
+            error,
+          },
+        });
+      }
+    },
+    [],
+  );
 
   const addTodo = useCallback(async (text) => {
     const type = TodoAppType.ADD_TODO;
@@ -163,13 +178,10 @@ export const TodoProvider = ({ children }: PropsWithChildren) => {
     }
   }, []);
 
-  console.log(state);
-
-  return (
-    <TodoContext.Provider
-      value={{ ...state, addTodo, toggleCompleteTodo, deleteTodo, loadTodo }}
-    >
-      {children}
-    </TodoContext.Provider>
+  const value = useMemo(
+    () => ({ ...state, addTodo, toggleCompleteTodo, deleteTodo, loadTodo }),
+    [state],
   );
+
+  return <TodoContext.Provider value={value}>{children}</TodoContext.Provider>;
 };

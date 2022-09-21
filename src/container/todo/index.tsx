@@ -1,12 +1,20 @@
 import React, { useContext, useEffect } from 'react';
 import { TodoContext } from '../../context/todoContext';
+import TodoFilter from './todoFilter';
 import TodoForm from './todoForm';
 import TodoList from './todoList';
 
 type Props = {};
 
 const Todo = (props: Props) => {
-  const { loadTodo } = useContext(TodoContext);
+  const {
+    loadTodo,
+    filterType,
+    todoList,
+    addTodo,
+    toggleCompleteTodo,
+    deleteTodo,
+  } = useContext(TodoContext);
 
   useEffect(() => {
     loadTodo();
@@ -15,8 +23,13 @@ const Todo = (props: Props) => {
   return (
     <div className="flex flex-col h-screen items-center">
       <h1 className="text-4xl font-semibold py-4">Todo Application</h1>
-      <TodoForm />
-      <TodoList />
+      <TodoForm addTodo={addTodo} />
+      <TodoList
+        todoList={todoList}
+        toggleCompleteTodo={toggleCompleteTodo}
+        deleteTodo={deleteTodo}
+      />
+      <TodoFilter filterType={filterType} loadTodo={loadTodo} />
     </div>
   );
 };

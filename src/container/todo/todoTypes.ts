@@ -28,4 +28,5 @@ export type AppState = {
 export type TodoStateData = {
   todoList: TodoItem[];
   appState: AppState[];
+  filterType: FilterType;
 };

@@ -3,20 +3,18 @@ import { TodoContext } from '../../context/todoContext';
 import TodoListItem from './todoListItem';
 import { AppState, FilterType, TodoItem } from './todoTypes';
 
-type Props = {};
+type Props = {
+  todoList: TodoItem[];
+  toggleCompleteTodo: (todoItem: TodoItem) => void;
+  deleteTodo: (todoItem: TodoItem) => void;
+};
 
-const TodoList = ({}: Props) => {
-  const { todoList, toggleCompleteTodo, deleteTodo } = useContext(TodoContext);
+const TodoList = ({ todoList, toggleCompleteTodo, deleteTodo }: Props) => {
+  console.log('TodoList render');
 
   return (
     <ul className="w-full flex flex-col gap-4 flex-1">
       {todoList.map((todoItem) => {
-        // const updateTodoItemState = updateTodoState?.find(
-        //   (x) => x.id === todoItem.id,
-        // );
-        // const deleteTodoItemState = deleteTodoState?.find(
-        //   (x) => x.id === todoItem.id,
-        // );
         return (
           <TodoListItem
             key={todoItem.id}
@@ -32,4 +30,4 @@ const TodoList = ({}: Props) => {
   );
 };
 
-export default TodoList;
+export default memo(TodoList);

@@ -1,4 +1,5 @@
 import {
+  FilterType,
   TodoAppType,
   TodoItem,
   TodoStateData,
@@ -7,6 +8,7 @@ import {
 export const todoInitialState = {
   todoList: [],
   appState: [],
+  filterType: FilterType.all,
 };
 
 type RequestType = {
@@ -40,7 +42,10 @@ type DeleteTodoRequestType = {
   payload: RequestType;
 };
 
-type LoadTodoSuccessType = { type: 'LOAD_TODO_SUCCESS'; payload: TodoItem[] };
+type LoadTodoSuccessType = {
+  type: 'LOAD_TODO_SUCCESS';
+  payload: { todoList: TodoItem[]; filterType: FilterType };
+};
 
 type AddTodoSuccessType = { type: 'ADD_TODO_SUCCESS'; payload: TodoItem };
 
@@ -92,7 +97,8 @@ export default (state: TodoStateData, { type, payload }: TodoReducerType) => {
 
     case 'LOAD_TODO_SUCCESS': {
       return {
-        todoList: payload,
+        todoList: payload.todoList,
+        filterType: payload.filterType,
         appState: state.appState.filter(
           (x) => x.type !== TodoAppType.FETCH_TODO,
         ),
@@ -101,6 +107,7 @@ export default (state: TodoStateData, { type, payload }: TodoReducerType) => {
 
     case 'ADD_TODO_SUCCESS': {
       return {
+        ...state,
         todoList: [...state.todoList, payload],
         appState: state.appState.filter((x) => x.type !== TodoAppType.ADD_TODO),
       };
@@ -109,6 +116,7 @@ export default (state: TodoStateData, { type, payload }: TodoReducerType) => {
     case 'UPDATE_TODO_SUCCESS': {
       const index = state.todoList.findIndex((x) => x.id === payload.id);
       return {
+        ...state,
         todoList: [
           ...state.todoList.slice(0, index),
           payload,
@@ -123,6 +131,7 @@ export default (state: TodoStateData, { type, payload }: TodoReducerType) => {
     case 'DELETE_TODO_SUCCESS': {
       const index = state.todoList.findIndex((x) => x.id === payload.id);
       return {
+        ...state,
         todoList: [
           ...state.todoList.slice(0, index),
           ...state.todoList.slice(index + 1),

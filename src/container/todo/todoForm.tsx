@@ -1,14 +1,17 @@
-import React, { useRef, useContext } from 'react';
+import React, { useRef, useContext, memo } from 'react';
 import cn from 'classnames';
 import { AppState } from './todoTypes';
 import { LocaleContext } from '../../context/localeContext';
 import { TodoContext } from '../../context/todoContext';
 
-type Props = {};
+type Props = {
+  addTodo: (value?: string) => void;
+};
 
-const TodoForm = ({}: Props) => {
+const TodoForm = ({ addTodo }: Props) => {
+  console.log('TodoForm Render');
   const todoInputRef = useRef<HTMLInputElement>(null);
-  const { addTodo } = useContext(TodoContext);
+  // const { addTodo } = useContext(TodoContext);
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -41,4 +44,4 @@ const TodoForm = ({}: Props) => {
   );
 };
 
-export default TodoForm;
+export default memo(TodoForm);

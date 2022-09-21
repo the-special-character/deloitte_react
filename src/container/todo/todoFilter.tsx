@@ -3,42 +3,46 @@ import cn from 'classnames';
 import { FilterType } from './todoTypes';
 
 type Props = {
-  filterTodos: (ft: FilterType) => void;
   filterType: FilterType;
+  loadTodo: (value?: FilterType) => void;
 };
 
-const TodoFilter = ({ filterTodos, filterType }: Props) => {
-  console.log('render todoFilter');
+const TodoFilter = ({ filterType, loadTodo }: Props) => {
+  console.log('TodoFilter Render');
+  const handleFilter = (event) => {
+    loadTodo(event.target.name);
+  };
+
+  const btnClass = (ft: FilterType) => {
+    return cn('btn rounded-none flex-1', {
+      'bg-orange-500 hover:bg-orange-700 focus:ring-orange-400':
+        filterType === ft,
+    });
+  };
 
   return (
     <div className="flex w-full">
       <button
-        className={cn('btn rounded-none flex-1', {
-          'bg-orange-500 hover:bg-orange-700 focus:ring-orange-400':
-            filterType === FilterType.all,
-        })}
+        className={btnClass(FilterType.all)}
         type="button"
-        onClick={() => filterTodos(FilterType.all)}
+        name={FilterType.all}
+        onClick={handleFilter}
       >
         All
       </button>
       <button
-        className={cn('btn rounded-none flex-1', {
-          'bg-orange-500 hover:bg-orange-700 focus:ring-orange-400':
-            filterType === FilterType.pending,
-        })}
+        className={btnClass(FilterType.pending)}
         type="button"
-        onClick={() => filterTodos(FilterType.pending)}
+        name={FilterType.pending}
+        onClick={handleFilter}
       >
         Pending
       </button>
       <button
-        className={cn('btn rounded-none flex-1', {
-          'bg-orange-500 hover:bg-orange-700 focus:ring-orange-400':
-            filterType === FilterType.complete,
-        })}
+        className={btnClass(FilterType.complete)}
         type="button"
-        onClick={() => filterTodos(FilterType.complete)}
+        name={FilterType.complete}
+        onClick={handleFilter}
       >
         Completed
       </button>
@@ -46,11 +50,4 @@ const TodoFilter = ({ filterTodos, filterType }: Props) => {
   );
 };
 
-const TodoFilterMemo = memo(TodoFilter, (prevProps, nextProps) => {
-  console.log(prevProps);
-  console.log(nextProps);
-
-  return true;
-});
-
-export default TodoFilterMemo;
+export default memo(TodoFilter);
