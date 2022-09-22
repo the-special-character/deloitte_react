@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
+import { AuthProvider } from './context/authContext';
 
 import './main.css';
 import routes from './routes';
@@ -23,7 +24,9 @@ if (container) {
         </h1>
       }
     >
-      <RouterProvider router={routes} />
+      <AuthProvider>
+        <RouterProvider router={routes} />
+      </AuthProvider>
     </Suspense>,
   );
 }

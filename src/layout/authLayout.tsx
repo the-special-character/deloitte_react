@@ -1,9 +1,16 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Outlet, Navigate } from 'react-router-dom';
+import { AuthContext } from '../context/authContext';
 
 type Props = {};
 
 const AuthLayout = (props: Props) => {
+  const { isAuthenticated } = useContext(AuthContext);
+
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
+
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">

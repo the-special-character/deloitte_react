@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { FieldProps } from 'formik';
 
 type Props<T> = {} & React.InputHTMLAttributes<HTMLInputElement> &
@@ -10,6 +10,7 @@ const FormikInput = <T, undefined>({
   id,
   ...props
 }: Props<T>) => {
+  console.log('formik input');
   return (
     <div>
       <label htmlFor={id} className="sr-only">
@@ -29,4 +30,4 @@ const FormikInput = <T, undefined>({
   );
 };
 
-export default FormikInput;
+export default memo(FormikInput);

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Formik, Field, Form } from 'formik';
 import { object, string, ref } from 'yup';
 import FormikInput from '../component/formikInput';
 import FomikForm from '../component/FormikForm';
 import FormikSelect from '../component/formikSelect';
+import { AuthContext } from '../context/authContext';
 
 const registerForm = [
   {
@@ -69,12 +70,13 @@ const registerForm = [
   },
 ];
 
-type RegisterFormType = {
+export type RegisterFormType = {
   name: string;
   email: string;
   password: string;
   confirmPassword: string;
   gender: string;
+  serverError?: string;
 };
 
 const registerInitValues: RegisterFormType = {
@@ -88,14 +90,12 @@ const registerInitValues: RegisterFormType = {
 type Props = {};
 
 const Register = (props: Props) => {
-  const handleSubmit = (values) => {
-    console.log(values);
-  };
+  const { register } = useContext(AuthContext);
 
   return (
     <FomikForm
       initialValues={registerInitValues}
-      onSubmit={handleSubmit}
+      onSubmit={register}
       btnText="Sign up"
       fields={registerForm}
     />

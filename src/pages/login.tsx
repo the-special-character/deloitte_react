@@ -1,7 +1,8 @@
 import { Field } from 'formik';
-import React from 'react';
+import React, { useContext } from 'react';
 import FomikForm from '../component/FormikForm';
 import FormikInput from '../component/formikInput';
+import { AuthContext } from '../context/authContext';
 
 const loginForm = [
   {
@@ -24,10 +25,11 @@ const loginForm = [
   },
 ];
 
-type LoginFormType = {
+export type LoginFormType = {
   email: string;
   password: string;
   rememberMe: boolean;
+  serverError?: null;
 };
 
 const LoginInitValues: LoginFormType = {
@@ -39,14 +41,11 @@ const LoginInitValues: LoginFormType = {
 type Props = {};
 
 const Login = (props: Props) => {
-  const handleSubmit = (values) => {
-    console.log(values);
-  };
-
+  const { login } = useContext(AuthContext);
   return (
     <FomikForm
       initialValues={LoginInitValues}
-      onSubmit={handleSubmit}
+      onSubmit={login}
       btnText="Submit btn"
       fields={loginForm}
     >

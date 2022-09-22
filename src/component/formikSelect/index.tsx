@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { FieldProps } from 'formik';
 
 type Props<T> = {
@@ -13,6 +13,8 @@ const FormikSelect = <T, undefined>({
   options,
   ...props
 }: Props<T>) => {
+  console.log('formik select');
+
   return (
     <div>
       <label htmlFor={id} className="sr-only">
@@ -24,7 +26,9 @@ const FormikSelect = <T, undefined>({
         {...props}
       >
         {options.map((x) => (
-          <option value={x.value}>{x.children}</option>
+          <option key={`option_${x.value}`} value={x.value}>
+            {x.children}
+          </option>
         ))}
       </select>
       {touched[field.name] && errors[field.name] && (
@@ -34,4 +38,4 @@ const FormikSelect = <T, undefined>({
   );
 };
 
-export default FormikSelect;
+export default memo(FormikSelect);

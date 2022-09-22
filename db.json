@@ -64,8 +64,9 @@
   "users": [
     {
       "email": "yagnesh.modh@gmail.com",
-      "password": "$2a$10$WXGDgLxqmY8Fai02WnTP2OLI5jqMHGsyzCbsmVAmHuSx57WoiEiiK",
-      "name": "yagnesh modh",
+      "password": "$2a$10$hwADQyCxgvAo/XId1a4/9eggVOfN.2tJt0wZJVBW2MSs12VuZGH8e",
+      "name": "YAGNESH MODH",
+      "gender": "male",
       "id": 1
     }
   ]
