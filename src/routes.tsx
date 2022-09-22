@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router-dom';
 // import AuthLayout from './layout/authLayout';
 import MainLayout from './layout/mainLayout';
 import Home from './pages/home';
+import NotFound from './pages/notFound';
 // import Login from './pages/login';
 // import Register from './pages/register';
 
@@ -37,5 +38,9 @@ export default createBrowserRouter([
         element: <Register />,
       },
     ],
+  },
+  {
+    path: '*',
+    element: <NotFound />,
   },
 ]);
