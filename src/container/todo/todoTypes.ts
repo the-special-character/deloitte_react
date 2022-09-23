@@ -17,8 +17,8 @@ export type TodoItem = {
   isDone: boolean;
 };
 
-export type AppState = {
-  type: TodoAppType;
+export type AppState<T> = {
+  type: T;
   isLoading: boolean;
   hasError?: boolean;
   errorMessage?: string;
@@ -27,6 +27,6 @@ export type AppState = {
 
 export type TodoStateData = {
   todoList: TodoItem[];
-  appState: AppState[];
+  appState: AppState<TodoAppType>[];
   filterType: FilterType;
 };

@@ -10,7 +10,7 @@ export type User = {
 export const authInitialState = {
   user: undefined,
   accessToken: undefined,
-  isAuthenticated: false,
+  isAuthenticated: !!localStorage.getItem('@tsc/token'),
 };
 
 export type AuthStateType = {
@@ -64,7 +64,7 @@ export default (
     }
 
     case 'LOGOUT': {
-      return authInitialState;
+      return { ...authInitialState, isAuthenticated: false };
     }
 
     default:

@@ -1,9 +1,11 @@
 import React, { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+import { ProductsProvider } from './context/productsContext';
 // import AuthLayout from './layout/authLayout';
 import MainLayout from './layout/mainLayout';
 import Home from './pages/home';
 import NotFound from './pages/notFound';
+import ProductDetails from './pages/productDetails';
 // import Login from './pages/login';
 // import Register from './pages/register';
 
@@ -17,11 +19,14 @@ export default createBrowserRouter([
   {
     path: '/',
     element: <MainLayout />,
-
     children: [
       {
         index: true,
         element: <Home />,
+      },
+      {
+        path: '/:productId',
+        element: <ProductDetails />,
       },
     ],
   },

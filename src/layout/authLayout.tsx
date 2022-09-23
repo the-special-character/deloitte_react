@@ -1,11 +1,14 @@
 import React, { useContext } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/authContext';
 
 type Props = {};
 
 const AuthLayout = (props: Props) => {
   const { isAuthenticated } = useContext(AuthContext);
+  let location = useLocation();
+
+  console.log(location);
 
   if (isAuthenticated) {
     return <Navigate to="/" />;

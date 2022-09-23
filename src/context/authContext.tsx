@@ -50,8 +50,6 @@ export const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [state, dispatch] = useReducer(authReducer, authInitialState);
 
-  console.log(state);
-
   useEffect(() => {
     const token = localStorage.getItem('@tsc/token');
 
